@@ -1,0 +1,82 @@
+Food_struct_Gyakorlat_10
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+
+using namespace std;
+
+struct food
+{
+    string category,name;
+    double carbon, protein, fat;
+};
+food load_from_line(string line)
+{
+    stringstream ss (line);
+    string type, name;
+    double carbon, protein, fat;
+    char c;
+    // ss << line
+    getline(ss,type,';');
+    getline(ss, name, ';');
+    ss >> carbon >> c >> protein >> c >> fat;
+    //cout<< food << " "<< fat<< endl;
+    //cout<< get_cal(carbon,protein,fat) << endl;
+    food f = {type, name, carbon, protein, fat};
+    //f.category = type;
+    //f.name = name; stb...
+    return f;
+
+}
+
+
+double get_calory(food f)
+{
+    return f.carbon * 4.1 + f.protein * 4.1 + f.fat * 9.3;
+}
+vector<food> load_data(string filename)
+{
+    ifstream fin (filename);
+    if(!fin.is_open())
+    {
+        cout<<filename<<"is not open!"<<endl;
+        exit(12);
+    }
+    string line;
+    getline (fin, line);
+    //cout<< line <<endl;
+    vector<food> v;
+    while(getline(fin, line));
+    {
+        food f = load_from_line(line);
+        //coutf.name<<">"<<f.fat<<endl;
+        v.push_back(f);
+    }
+    return v;
+}
+food get_max_calory(vector<food> v){
+double max_cal = get_calory(v[0]);
+food max_food= v[0];
+for(int i=0;i<v.size();i++){
+    double cal = get_calory(v[i]);
+    if(cal > max_cal){
+        max_cal = cal;
+        max_food = v[i];
+    }
+}
+return max_food;
+}
+void dump (vector<food> v){
+    for(food f: v) // f = v[i]
+        cout<< f.name<<" "<<f.fat << endl;
+}
+int main()
+{
+    string file = "tapanyag.csv";
+    vector<food> v = load_data(file);
+    dump(v);
+    cout<< get_max_calory(v).name<<endl;
+    return 0;
+}
